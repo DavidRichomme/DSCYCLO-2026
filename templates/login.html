@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion - DSCYCLO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <form method="post" action="/login" class="bg-white p-8 rounded-lg shadow-lg w-80">
+        <h1 class="text-xl font-bold text-[#003F5C] mb-6">DSCYCLO - Connexion</h1>
+
+        {% if error %}
+        <p class="text-red-500 text-sm mb-4">{{ error }}</p>
+        {% endif %}
+
+        <label class="block text-sm mb-1">Username</label>
+        <input type="text" name="username" class="w-full border p-2 rounded mb-4">
+
+        <div class="relative mb-4">
+            <label class="block text-sm mb-1">Password</label>
+            <input type="password" name="password" id="password-field" class="w-full border p-2 rounded pr-10">
+            <button type="button" id="toggle-password" class="absolute right-2 top-8 text-gray-500">👁️</button>
+        </div>
+
+        <button type="submit" class="w-full bg-[#374C80] text-white py-2 rounded">Se connecter</button>
+    </form>
+    <script>
+        document.getElementById('toggle-password').addEventListener('click', () => {
+            const field = document.getElementById('password-field');
+            field.type = field.type === 'password' ? 'text' : 'password';
+        });
+    </script>
+    <script>
+        document.querySelector('form').addEventListener('submit', () => {
+            console.log('Tentative de connexion:');
+            console.log('username:', JSON.stringify(document.querySelector('input[name="username"]').value));
+            console.log('password:', JSON.stringify(document.querySelector('input[name="password"]').value));
+        });
+    </script>
+</body>
+</html>

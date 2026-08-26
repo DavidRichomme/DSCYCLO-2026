@@ -1,0 +1,8 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+*.db
+.DS_Store
+bike_repair.db
+PremierWorkspaceVScode.code-workspace

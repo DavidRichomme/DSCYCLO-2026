@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Bike Repair</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/scriptDashboard.js" defer></script>
+</head>
+
+<body class="bg-gray-100">
+    <header class="bg-[#003F5C] text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-base font-bold">DSCYCLO 2026 - Python / Pydantic / FastAPI / PostgreSQL</h1>
+        <div class="text-sm text-right">
+            <span class="font-semibold">Bonjour {{ current_user.username }}</span>
+            <span
+                class="ml-2 px-2 py-1 rounded {% if current_user.role.value == 'admin' %}bg-[#F5A356]{% else %}bg-gray-500{% endif %}">
+                {% if current_user.role.value == 'admin' %}Administrateur{% else %}Utilisateur{% endif %}
+            </span>
+            <a href="/logout"><button title="Deconnexion" class="text-base px-3 py-1">🚫</button></a>
+        </div>
+    </header>
+    <div class="flex min-h-screen">
+
+        <!-- Sidebar gauche -->
+        <aside class="w-48 bg-white shadow-md p-4 flex flex-col gap-3">
+            <a href="/dashboard?entite=bikes">
+                <button class="w-full bg-[#927869] hover:bg-[#BA9D8A] text-white py-3 rounded-lg font-bold">
+                    Vélos
+                </button>
+            </a>
+            <a href="/dashboard?entite=pieces">
+                <button class="w-full bg-[#069494] hover:bg-[#176161] text-white py-3 rounded-lg font-bold">
+                    Pièces
+                </button>
+            </a>
+            <a href="/dashboard?entite=repairs">
+                <button class="w-full bg-[#517891] hover:bg-[#003F5C] text-white py-3 rounded-lg font-bold">
+                    Reparations
+                </button>
+            </a>
+            {% if current_user.role.value == 'admin' %}
+            <a href="/dashboard?entite=users">
+                <button class="w-full bg-[#C68346] hover:bg-[#9E5F24] text-white py-3 rounded-lg font-bold">
+                    Users
+                </button>
+            </a>
+            {% endif %}
+        </aside>
+
+        <!-- Contenu droite -->
+        <main class="flex-1 p-8">
+<!-- -------------------------------------------------   PARTIE FORMULAIRES   --------------------------------------------------------- -->
+<!-- -------------------------------------------------   FORMULAIRE  VELOS    --------------------------------------------------------- -->
+            {% if entite == "bikes" %}
+            <div class="w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                <p class="bg-[#927869] text-white p-3 font-bold">Créer / Modifier un vélo</p>
+                <form id="user-form" data-method="{% if edit_item %}PATCH{% else %}POST{% endif %}"
+                    action="{% if edit_item %}/bikes/{{ edit_item.id }}{% else %}/bikes{% endif %}" class="p-4">
+
+                    <input type="text" name="bike_number" placeholder="Numéro de vélo"
+                        value="{% if edit_item %}{{ edit_item.bike_number }}{% endif %}"
+                        class="border p-2 rounded mr-2">
+
+                    <input type="text" name="attribution_nom" placeholder="Nom"
+                        value="{% if edit_item %}{{ edit_item.attribution_nom }}{% endif %}"
+                        class="border p-2 rounded mr-2">
+
+                    <input type="text" name="attribution_prenom" placeholder="Prénom"
+                        value="{% if edit_item %}{{ edit_item.attribution_prenom }}{% endif %}"
+                        class="border p-2 rounded mr-2">
+
+                    <button type="submit" class="bg-[#927869] hover:bg-[#BA9D8A] text-white px-4 py-2 rounded">
+                        {% if edit_item %}Modifier{% else %}Créer{% endif %}
+                    </button>
+                    <a href="/dashboard?entite=bikes"><button type="button"
+                            class="bg-gray-400 text-white px-4 py-2 rounded ml-2">Annuler</button></a>
+                </form>
+            </div>
+<!-- -------------------------------------------------   FORMULAIRE  PIECES    --------------------------------------------------------- -->
+            {% elif entite == "pieces" %}
+            <div class="w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                <p class="bg-[#069494] text-white p-3 font-bold">Créer / Modifier une pièce</p>
+                <form id="user-form" data-method="{% if edit_item %}PATCH{% else %}POST{% endif %}"
+                    action="{% if edit_item %}/pieces/{{ edit_item.id }}{% else %}/pieces{% endif %}" class="p-4">
+
+                    <input type="text" name="libelle_piece" placeholder="Libellé pièce"
+                        value="{% if edit_item %}{{ edit_item.libelle_piece }}{% endif %}"
+                        class="border p-2 rounded mr-2">
+
+                    <input type="text" name="reference_piece" placeholder="Référence"
+                        value="{% if edit_item %}{{ edit_item.reference_piece }}{% endif %}"
+                        class="border p-2 rounded mr-2">
+
+                    <input type="text" name="qte_stock_piece" placeholder="Stock"
+                        value="{% if edit_item %}{{ edit_item.qte_stock_piece }}{% endif %}"
+                        class="border p-2 rounded mr-2">
+
+                    <button type="submit" class="bg-[#069494] hover:bg-[#176161] text-white px-4 py-2 rounded">
+                        {% if edit_item %}Modifier{% else %}Créer{% endif %}
+                    </button>
+                    <a href="/dashboard?entite=pieces"><button type="button"
+                            class="bg-gray-400 text-white px-4 py-2 rounded ml-2">Annuler</button></a>
+                </form>
+            </div>
+<!-- -------------------------------------------------   FORMULAIRE  UTILISATEURS    --------------------------------------------------------- -->
+            {% elif entite == "users" %}
+            <div class="w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                <p class="bg-[#C68346] text-white p-3 font-bold">Créer / Modifier un utilisateur</p>
+                <form id="user-form" data-method="{% if edit_item %}PATCH{% else %}POST{% endif %}"
+                        action="{% if edit_item %}/users/{{ edit_item.id }}{% else %}/users{% endif %}" class="p-4">
+
+                    <input type="text" name="username" placeholder="Nom"
+                        value="{% if edit_item %}{{ edit_item.username }}{% endif %}" class="border p-2 rounded mr-2">
+
+                    <input type="password" name="password" placeholder="Mot de passe" class="border p-2 rounded mr-2">
+
+                    <select name="role" class="border p-2 rounded mr-2">
+                        <option value="user" {% if edit_item and edit_item.role.value=="user" %}selected{% endif %}>
+                            Utilisateur</option>
+                        <option value="admin" {% if edit_item and edit_item.role.value=="admin" %}selected{% endif %}>
+                            Administrateur</option>
+                    </select>
+
+                    <button type="submit" class="bg-[#C68346] hover:bg-[#9E5F24] text-white px-4 py-2 rounded">
+                        {% if edit_item %}Modifier{% else %}Créer{% endif %}
+                    </button>
+                    <a href="/dashboard?entite=users"><button type="button"
+                            class="bg-gray-400 text-white px-4 py-2 rounded ml-2">Annuler</button></a>
+                </form>
+            </div>
+<!-- -------------------------------------------------   FORMULAIRE  REPARATIONS    --------------------------------------------------------- -->
+            {% elif entite == "repairs" %}
+            <div class="w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                <p class="bg-[#517891] text-white p-3 font-bold">Créer / Modifier une réparation</p>
+                <form id="repair-form" data-method="{% if edit_item %}PATCH{% else %}POST{% endif %}"
+                    action="{% if edit_item %}/repairs/{{ edit_item.id }}{% else %}/repairs{% endif %}" class="p-4">
+                    <div style="display: flex;">
+                    <select name="bike_id" class="border p-2 rounded mr-2">
+                        <option value="">-- Vélo --</option>
+                        {% for bike in bikes_list %}
+                        <option value="{{ bike.id }}" {% if edit_item and edit_item.bike.id == bike.id %}selected{% endif %}>
+                            {{ bike.bike_number }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="statut" class="border p-2 rounded mr-2">
+                        <option value="a_faire" {% if edit_item and edit_item.statut.value == "a_faire" %}selected{% endif %}>À faire</option>
+                        <option value="termine" {% if edit_item and edit_item.statut.value == "termine" %}selected{% endif %}>Terminée</option>
+                        <option value="suspendu" {% if edit_item and edit_item.statut.value == "suspendu" %}selected{% endif %}>Suspendue</option>
+                    </select>
+                    {% if edit_item %}
+                    <div class="text-sm text-gray-600 mb-2 ml-6 pt-3">
+                        <span class="font-semibold">Technicien :</span> {{ edit_item.user.username }}
+                        <span class="ml-4 font-semibold pl-4">Date :</span> {{ edit_item.date_reparation.strftime('%d/%m/%y %H:%M') }}
+                    </div>
+                    {% endif %}
+                    </div>
+                    <!-- <div class="font-semibold mb-2">{{edit_item.date_reparation}}</div>
+                    <div class="font-semibold mb-2">{{edit_item.Username}}</div> -->
+
+                    <textarea name="commentaire" placeholder="Commentaire" rows ="3" class ="border p-2 rounded mr-2 mb-2 mt-2 w-full">{% if edit_item %}{{ edit_item.commentaire }}{% endif %}</textarea>
+
+                    <button type="submit" class="bg-[#517891] hover:bg-[#003F5C] text-white px-4 py-2 rounded">
+                        {% if edit_item %}Modifier{% else %}Créer{% endif %}
+                    </button>
+                    <a href="/dashboard?entite=repairs"><button type="button"
+                            class="bg-gray-400 text-white px-4 py-2 rounded ml-2">Annuler</button></a>
+                <div class="mt-4">
+                    <p class="font-semibold mb-2">Pièces changées :</p>
+
+                    <div id="pieces-container"></div>
+
+                    <div class="flex gap-2 items-center mt-2">
+                        <select id="piece-select" class="border p-2 rounded">
+                            <option value="">-- Pièce --</option>
+                            {% for piece in pieces_list %}
+                            <option value="{{ piece.id }}" data-libelle="{{ piece.libelle_piece }}">{{ piece.libelle_piece }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="number" id="piece-quantite" min="1" value="1" class="border p-2 rounded w-20">
+                        <button type="button" id="add-piece-btn" class="bg-gray-600 text-white px-3 py-1 rounded">+ Ajouter</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+            {% endif %}
+
+<!-- -------------------------------------------------   PARTIE TABLEAUX   --------------------------------------------------------- -->
+            {% if data %}
+            <table class="w-full bg-white shadow-lg rounded-lg overflow-hidden mt-6">
+                {% if entite == "bikes" %}
+                <tr class="bg-[#927869] text-white">
+                    <th class="p-3 text-left">ID</th>
+                    <th class="p-3 text-left">Numéro</th>
+                    <th class="p-3 text-left">Attribution</th>
+                    <th class="p-3 text-left"></th>
+                </tr>
+                {% for item in data %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=bikes&edit_id={{ item.id }}'">{{ item.id }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=bikes&edit_id={{ item.id }}'">{{ item.bike_number }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=bikes&edit_id={{ item.id }}'">{% if item.attribution_nom == None %} {% else %}{{ item.attribution_nom.upper() }} {{ item.attribution_prenom }}{% endif %}</td>
+                    <td class="p-3">
+                        <button class="delete-btn bg-red-100 text-white px-2 py-1 rounded text-xs"
+                                title="Supprimer"
+                                data-url="/bikes/{{ item.id }}">🗑️</button>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% elif entite == "pieces" %}
+                <tr class="bg-[#069494] text-white">
+                    <th class="p-3 text-left">ID</th>
+                    <th class="p-3 text-left">Libellé</th>
+                    <th class="p-3 text-left">Référence</th>
+                    <th class="p-3 text-left">Stock</th>
+                    <th class="p-3 text-left"></th>
+                </tr>
+                {% for item in data %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=pieces&edit_id={{ item.id }}'">{{ item.id }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=pieces&edit_id={{ item.id }}'">{{ item.libelle_piece }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=pieces&edit_id={{ item.id }}'">{{ item.reference_piece }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=pieces&edit_id={{ item.id }}'">{{ item.qte_stock_piece }}</td>
+                    <td class="p-3">
+                        <button class="delete-btn bg-red-100 text-white px-2 py-1 rounded text-xs"
+                                title="Supprimer"
+                                data-url="/pieces/{{ item.id }}">🗑️</button>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% elif entite == "repairs" %}
+                <tr class="bg-[#517891] text-white">
+                    <th class="p-3 text-left">ID</th>
+                    <th class="p-3 text-left">Technicien</th>
+                    <th class="p-3 text-left">N° de Vélo</th>
+                    <th class="p-3 text-left">Date de réparation</th>
+                    <th class="p-3 text-left">Commentaire</th>
+                    <th class="p-3 text-left">Statut</th>
+                    <th class="p-3 text-left"></th>
+                </tr>
+                {% for item in data %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=repairs&edit_id={{ item.id }}'">{{ item.id }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=repairs&edit_id={{ item.id }}'">{{ item.user.username }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=repairs&edit_id={{ item.id }}'">{{ item.bike.bike_number }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=repairs&edit_id={{ item.id }}'">{{ item.date_reparation.strftime('%d/%m/%y %H:%M') }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=repairs&edit_id={{ item.id }}'">{{ item.commentaire }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=repairs&edit_id={{ item.id }}'">{% if item.statut.value == 'termine' %}TERMINEE{% elif item.statut.value == 'suspendu'%}SUSPENDUE{% else %}A FAIRE{% endif %}</td>
+                    <td class="p-3">
+                        <button class="delete-btn bg-red-100 text-white px-2 py-1 rounded text-xs"
+                                title="Supprimer"
+                                data-url="/repairs/{{ item.id }}">🗑️</button>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% elif entite == "users" %}
+                <tr class="bg-[#C68346] text-white">
+                    <th class="p-3 text-left">ID</th>
+                    <th class="p-3 text-left">Username</th>
+                    <th class="p-3 text-left">Role</th>
+                    <th class="p-3 text-left"></th>
+                </tr>
+                {% for item in data %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=users&edit_id={{ item.id }}'">{{ item.id }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=users&edit_id={{ item.id }}'">{{ item.username }}</td>
+                    <td class="p-3 cursor-pointer" onclick="window.location.href='/dashboard?entite=users&edit_id={{ item.id }}'">{% if item.role.value == 'admin' %}Administrateur{% else %}Utilisateur{% endif %}</td>
+                    <td class="p-3">
+                        <button class="delete-btn bg-red-100 text-white px-2 py-1 rounded text-xs"
+                                title="Supprimer"
+                                data-url="/users/{{ item.id }}">🗑️</button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </table>
+            {% endif %}
+        </main>
+    </div>
+</body>
+
+</html>
