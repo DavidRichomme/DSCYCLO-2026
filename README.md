@@ -50,7 +50,28 @@ Ce découpage permet, par exemple, d'être passé de SQLite à PostgreSQL en ne 
 - Python 3.9+
 - PostgreSQL (ou un conteneur Docker PostgreSQL)
 
-### Étapes
+### Étapes avec Docker
+
+1. Cloner le dépôt
+```bash
+git clone https://github.com/DavidRichomme/DSCYCLO-2026.git
+cd DSCYCLO-2026
+```
+2. Installer Docker
+3. Initialiser le contenair Docker
+   A la racine du projet( ou sont les fichers téléchargés depuis github
+```bash
+docker-compose up --build 
+```
+4. Créer le premier administrateur
+```bash
+python seed.py 
+```   
+
+L'API est accessible sur `http://127.0.0.1:8000`, la documentation Swagger sur `http://127.0.0.1:8000/docs`, et le dashboard sur `http://127.0.0.1:8000/login`.
+
+
+### Étapes sans Docker
 
 1. Cloner le dépôt
 ```bash
@@ -78,6 +99,11 @@ DATABASE_URL=postgresql://utilisateur:mot_de_passe@localhost:5432/nom_de_la_base
 ```bash
 uvicorn main:app --reload
 ```
+
+6.Créer le premier administrateur
+```bash
+python seed.py 
+``` 
 
 L'API est accessible sur `http://127.0.0.1:8000`, la documentation Swagger sur `http://127.0.0.1:8000/docs`, et le dashboard sur `http://127.0.0.1:8000/login`.
 
