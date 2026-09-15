@@ -59,7 +59,7 @@ cd DSCYCLO-2026
 ```
 2. Installer Docker
 3. Initialiser le contenair Docker
-   A la racine du projet( ou sont les fichers téléchargés depuis github
+   A la racine du projet (ou sont les fichers téléchargés depuis github)
 ```bash
 docker-compose up --build 
 ```
